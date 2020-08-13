@@ -6,8 +6,14 @@ const port = 3000;
 const routes = require('./routes');
 const bodyParser = require('body-parser');
 const mongoClient = require('mongodb').MongoClient;
+const MongoStore = require('connect-mongo')(session);
 const dbName = 'menfess_twitter';
-const url = 'mongodb://localhost:27017/';
+
+const USERNAME = process.env.USERNAME;
+const PASSWORD = process.env.PASSWORD;
+const CLUSTER = process.env.CLUSTER;
+
+const url = `mongodb+srv://${USERNAME}:${PASSWORD}@${CLUSTER}-kdbqm.mongodb.net/test?retryWrites=true&w=majority`;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -19,6 +25,9 @@ app.use(
     resave: false,
     saveUninitialized: true,
     cookie: { secure: false },
+    store: new MongoStore({
+      url,
+    }),
   })
 );
 app.set('view engine', 'pug');
