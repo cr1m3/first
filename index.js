@@ -8,6 +8,10 @@ const bodyParser = require('body-parser');
 const mongoClient = require('mongodb').MongoClient;
 const MongoStore = require('connect-mongo')(session);
 const dbName = 'menfess_twitter';
+const dontenv = require('dotenv');
+const path = require('path');
+
+dontenv.config();
 
 const USERNAME = process.env.USERNAME;
 const PASSWORD = process.env.PASSWORD;
@@ -15,6 +19,7 @@ const CLUSTER = process.env.CLUSTER;
 
 const url = `mongodb+srv://${USERNAME}:${PASSWORD}@${CLUSTER}-kdbqm.mongodb.net/test?retryWrites=true&w=majority`;
 
+app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -31,6 +36,7 @@ app.use(
   })
 );
 app.set('view engine', 'pug');
+app.set('views', path.join(__dirname + '/public/views')); // sets the view directory
 
 mongoClient
   .connect(url, { useUnifiedTopology: true })

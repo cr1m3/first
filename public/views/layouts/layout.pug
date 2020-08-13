@@ -1,0 +1,10 @@
+html
+  block variables
+  head 
+    - var title=title || "MockThisTweet Menfess Client"
+    title #{title}
+    include script.pug
+  body
+    section(class="section")
+      div(class="container")
+        block content

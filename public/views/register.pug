@@ -1,0 +1,50 @@
+extends ./layouts/layout.pug
+
+block variables
+  title="Register Menfess"
+
+block content
+  h1(class="title") Register Menfess
+  form(action="/login/callback", method="post")
+    div(class="columns")
+      div(class="column is-one-quarter")
+
+        // username
+        div(class="field")
+            div(class="control has-icons-left")
+              input(type="text", name="username" class="input" placeholder="Menfess Username")
+              span(class="icon is-small is-left")
+                <i class="fas fa-at"></i>
+
+        // password
+        div(class="field")
+            div(class="control has-icons-left")
+              input(type="password", name="password" class="input" placeholder="Password")
+              span(class="icon is-small is-left")
+                <i class="fas fa-lock"></i>
+
+        // consumer_key
+        div(class="field")
+          div(class="control has-icons-left")
+            input(type="text", name="consumer_key" class="input" placeholder="Consumer Key")
+            span(class="icon is-small is-left")
+              <i class="fas fa-key"></i>
+
+        // consumer_secret
+        div(class="field")
+          div(class="control has-icons-left")
+            input(type="text", name="consumer_secret" class="input" placeholder="Consumer Secret")
+            span(class="icon is-small is-left")
+              <i class="fas fa-key"></i>
+
+        div(class="field")  
+          // button
+          div(class="control")
+            button(class="button is-success is-fullwidth")
+              span(class="icon")
+                <i class="fas fa-paper-plane"></i>
+              span| Register
+
+        include ./layouts/back_button.pug
+          
+    

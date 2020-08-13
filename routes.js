@@ -7,6 +7,10 @@ routes.get('/', (req, res) => {
   res.render('index');
 });
 
+routes.get('/register', (req, res) => {
+  res.render('register');
+});
+
 routes.get('/login', (req, res) => {
   res.render('login');
 });
@@ -16,9 +20,14 @@ routes.post('/login/callback', (req, res) => {
   let consumer_secret = req.body.consumer_secret;
 
   const db = req.app.get('db');
-  
+
   db.collection('menfess_credentials')
-    .insertOne({ menfess_name: 'fadhlu', consumer_key, consumer_secret })
+    .insertOne({
+      menfess_name: 'fadhlu',
+      consumer_key,
+      consumer_secret,
+      is_active: true,
+    })
     .then(result => {
       console.log('Success writing data');
     })
