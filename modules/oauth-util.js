@@ -14,7 +14,7 @@ class Consumer {
       consumer_key,
       consumer_secret,
       '1.0A',
-      'http://127.0.0.1:3000/sessions/callback',
+      'https://menfess-mtt-login.herokuapp.com/sessions/callback',
       'HMAC-SHA1'
     );
 
