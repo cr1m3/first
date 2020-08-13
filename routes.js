@@ -95,20 +95,25 @@ routes.get('/sessions/callback', (req, res) => {
 });
 
 routes.get('/home', (req, res) => {
-  c.consumer.get(
-    'https://api.twitter.com/1.1/account/verify_credentials.json',
-    req.session.oauthAccessToken,
-    req.session.oauthAccessTokenSecret,
-    (err, data, response) => {
-      if (err) {
-        res.json({ msg: err });
-      } else {
-        // @ts-ignore
-        let parsedData = JSON.parse(data);
-        res.send('You are signed in: ' + parsedData.screen_name);
+  try {
+    c.consumer.get(
+      'https://api.twitter.com/1.1/account/verify_credentials.json',
+      req.session.oauthAccessToken,
+      req.session.oauthAccessTokenSecret,
+      (err, data, response) => {
+        if (err) {
+          res.json({ msg: err });
+        } else {
+          // @ts-ignore
+          let parsedData = JSON.parse(data);
+          res.send('You are signed in: ' + parsedData.screen_name);
+        }
       }
-    }
-  );
+    );
+  } catch (error) {
+    console.log(error);
+    res.redirect('/');
+  }
 });
 
 module.exports = routes;
