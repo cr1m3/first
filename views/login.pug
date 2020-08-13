@@ -1,0 +1,19 @@
+extends template.pug
+
+block content
+  h1(class="title") Login
+  form(action="/login/callback", method="post")
+    div(class="columns")
+      div(class="column is-half")
+        div(class="field")
+          label(class="label is-primary") Consumer Key
+          div(class="control")
+            input(type="text", name="consumer_key" class="input is-primary")
+      div(class="column is-half")
+        div(class="field")
+          label(class="label") Consumer Secret
+          div(class="control")
+            input(type="text", name="consumer_secret" class="input is-primary")
+    div(class="control")
+      button(class="button is-primary") Login
+    
