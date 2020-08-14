@@ -16,14 +16,22 @@
         fields: ['text', 'email', 'password'],
         settings: {
           text: {
-            regex: '^[A-Za-z0-9-]{5,35}$',
+            regex: '^[A-Za-z0-9-]{4,35}$',
+            errMsg: {
+              min: 'Minimum chars: 4',
+              blank: "Can't be blank",
+            },
           },
           email: {
             regex:
               '^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:.[a-zA-Z0-9-]+)*$',
           },
           password: {
-            regex: "^[A-Za-z ,.'-]{7,35}$",
+            regex: "^[A-Za-z ,.'-]{6,35}$",
+            errMsg: {
+              min: 'Minimum chars: 6',
+              blank: "Can't be blank",
+            },
           },
         },
       },
@@ -55,15 +63,39 @@
           .show();
 
         RemoveIcon($e);
+        RemoveHelpText($e);
         AddIcon($e, 'not-valid');
+        AddHelpText($e, fieldtype);
       }
+    }
+
+    const AddHelpText = (e, fieldType) => {
+      const field = e.parent().parent();
+
+      let errMsg = '';
+
+      if (e.val().length == 0) {
+        errMsg = config.settings[fieldType].errMsg.blank;
+      } else if (e.val().length < 5) {
+        errMsg = config.settings[fieldType].errMsg.min;
+      }
+
+      if (field.children().length == 1) {
+        let html = `<p class="help is-danger">${errMsg}</p>`;
+        field.append(html);
+      } else {
+        field.children()[1].text = errMsg;
+      }
+    };
+
+    function RemoveHelpText(e) {
+      const field = e.parent().parent();
+      field.children().siblings('p').remove();
     }
 
     function ValidateAll($form) {
       $form.find('input').each(function (index, element) {
         var $element = $(element);
-        console.log(config.fields);
-        console.log($element.attr('type'));
         if ($.inArray($element.attr('type'), config.fields) !== -1) {
           Validate($(element));
         }
@@ -79,10 +111,10 @@
     function AddIcon(e, type) {
       if (type == 'valid') {
         var html =
-          '<span class="icon is-small is-right"><i class="fas fa-check"></i></span>';
+          '<span class="icon is-small is-right"><i class="fas fa-check has-text-success"></i></span>';
       } else if (type == 'not-valid') {
         var html =
-          '<span class="icon is-small is-right"><i class="fas fa-exclamation-triangle"></i></span>';
+          '<span class="icon is-small is-right"><i class="fas fa-exclamation-triangle has-text-danger"></i></span>';
       }
 
       if (e.parent().hasClass('has-icons-right')) {
