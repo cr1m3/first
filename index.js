@@ -10,14 +10,21 @@ const MongoStore = require('connect-mongo')(session);
 const dbName = 'menfess_twitter';
 const dotenv = require('dotenv');
 const path = require('path');
+const { log } = require('console');
 
 dotenv.config();
 
-const USERNAME = process.env.USERNAME;
-const PASSWORD = process.env.PASSWORD;
-const CLUSTER = process.env.CLUSTER;
+const NODE_ENV = process.env.NODE_ENV;
+let url = '';
 
-const url = `mongodb+srv://${USERNAME}:${PASSWORD}@${CLUSTER}-kdbqm.mongodb.net/test?retryWrites=true&w=majority`;
+if (NODE_ENV == 'development') {
+  url = `mongodb://localhost:27017/`;
+} else {
+  const USERNAME = process.env.USERNAME;
+  const PASSWORD = process.env.PASSWORD;
+  const CLUSTER = process.env.CLUSTER;
+  url = `mongodb+srv://${USERNAME}:${PASSWORD}@${CLUSTER}-kdbqm.mongodb.net/test?retryWrites=true&w=majority`;
+}
 
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.json());
