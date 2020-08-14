@@ -16,7 +16,7 @@
         fields: ['text', 'email', 'password'],
         settings: {
           text: {
-            regex: "^[A-Za-z ,.'-]{5,35}$",
+            regex: '^[A-Za-z0-9-]{5,35}$',
           },
           email: {
             regex:
@@ -32,7 +32,7 @@
 
     // main function
     function Validate($e) {
-      console.log($e.attr('type'));
+      // console.log($e.attr('type'));
       var fieldtype = $e.attr('type');
       var regex = new RegExp(config.settings[fieldtype].regex);
 
@@ -108,5 +108,5 @@
 
     return this;
   };
-// @ts-ignore
+  // @ts-ignore
 })(jQuery);
