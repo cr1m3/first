@@ -8,10 +8,10 @@ const bodyParser = require('body-parser');
 const mongoClient = require('mongodb').MongoClient;
 const MongoStore = require('connect-mongo')(session);
 const dbName = 'menfess_twitter';
-const dontenv = require('dotenv');
+const dotenv = require('dotenv');
 const path = require('path');
 
-dontenv.config();
+dotenv.config();
 
 const USERNAME = process.env.USERNAME;
 const PASSWORD = process.env.PASSWORD;
