@@ -11,14 +11,14 @@ block content
 
         // username
         div(class="field")
-            div(class="control has-icons-left")
+            div(class="control has-icons-left has-icons-right")
               input(type="text", name="username" class="input" placeholder="Menfess Username")
               span(class="icon is-small is-left")
                 <i class="fas fa-at"></i>
 
         // password
         div(class="field")
-            div(class="control has-icons-left")
+            div(class="control has-icons-left has-icons-right")
               input(type="password", name="password" class="input" placeholder="Password")
               span(class="icon is-small is-left")
                 <i class="fas fa-lock"></i>
@@ -33,4 +33,4 @@ block content
 
         include ./layouts/back_button.pug
           
-    
+  script(src="/js/form-validator.js")  

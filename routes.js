@@ -1,7 +1,9 @@
 const routes = require('express').Router();
 const Consumer = require('./modules/oauth-util');
 const { response } = require('express');
+const { validateRegister } = require('./modules/validator');
 const c = new Consumer();
+const { validationResult } = require('express-validator');
 
 routes.get('/', (req, res) => {
   res.render('index');
@@ -9,6 +11,16 @@ routes.get('/', (req, res) => {
 
 routes.get('/register', (req, res) => {
   res.render('register');
+});
+
+routes.post('/register/callback', validateRegister, (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  const { menfess_name, password, consumer_key, consumer_secret } = req.body;
+  res.send({ msg: { menfess_name, password, consumer_key, consumer_secret } });
 });
 
 routes.get('/login', (req, res) => {
