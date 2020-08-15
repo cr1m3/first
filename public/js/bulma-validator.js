@@ -134,9 +134,11 @@
     var $form = this;
 
     $form.find('[type=submit]').click(function (button) {
-      button.preventDefault();
+      // button.preventDefault();
       ValidateAll($form);
     });
+
+    
 
     return this;
   };

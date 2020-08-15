@@ -1,6 +1,10 @@
 const moongose = require('mongoose');
 const bcrypt = require('bcrypt-nodejs');
 const oauth = require('oauth');
+const dotenv = require('dotenv');
+dotenv.config();
+
+const HEROKU_URL = process.env.HEROKU_URL;
 
 const menfessSchema = new moongose.Schema(
   {
@@ -10,8 +14,7 @@ const menfessSchema = new moongose.Schema(
     accessToken: String,
     accessSecret: String,
     isActive: Boolean,
-    password: String,
-    hehe: String
+    password: String
   },
   { collection: 'menfess_credentials' }
 );
@@ -33,7 +36,7 @@ const getOAuthMenfess = (consumerKey, consumerSecret) =>
     consumerKey,
     consumerSecret,
     '1.0A',
-    'http://localhost:3000/sessions/callback',
+    HEROKU_URL || 'http://localhost:3000/sessions/callback',
     'HMAC-SHA1'
   );
 

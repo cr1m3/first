@@ -1,10 +1,10 @@
 const routes = require('express').Router();
-// const Consumer = require('./modules/oauth-util');
-// const { response } = require('express');
+const { createClient } = require('./modules/twitter-client');
 const { validateRegister } = require('./modules/validator');
 const { validationResult } = require('express-validator');
 const { models, getOAuthMenfess } = require('./models');
 let Consumer = null;
+let twitterClient = null;
 
 routes.get('/', (req, res) => {
   res.render('index');
@@ -14,41 +14,42 @@ routes.get('/login', (req, res) => {
   res.render('login');
 });
 
-routes.post('/login/callback', validateRegister, (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-
-  const { menfess_name, password, consumer_key, consumer_secret } = req.body;
-  res.send({ msg: { menfess_name, password, consumer_key, consumer_secret } });
+routes.post('/login/callback', (req, res) => {
+  models.Menfess.findOne({ menfessName: req.body.menfessName }, (err, menfess) => {
+    // @ts-ignore
+    if (!menfess.validPassword(req.body.password)) {
+      console.log(err);
+    } else {
+      res.redirect('/home')
+    }
+  })
 });
 
 routes.get('/register', (req, res) => {
-  if (req.session.menfessName != undefined) {
-    res.redirect('/home');
-  }
   res.render('register');
 });
 
-routes.post('/register/callback', (req, res) => {
+routes.post('/register/callback', validateRegister, (req, res) => {
   let sessionData = req.session;
 
   let consumerKey = req.body.consumer_key;
   let consumerSecret = req.body.consumer_secret;
   let menfessName = req.body.menfess_name;
-  let password = 'test';
 
   sessionData.menfessName = menfessName;
+  sessionData.consumerKey = consumerKey;
+  sessionData.consumerSecret = consumerSecret;
 
-  models.Menfess.create(
-    { menfessName, consumerKey, consumerSecret, password },
-    function (err, results) {
-      if (err) {
-        console.log(err);
-      }
-    }
-  );
+  let newMenfess = new models.Menfess({
+    menfessName,
+    consumerKey,
+    consumerSecret,
+    isActive: true,
+  });
+
+  // @ts-ignore
+  newMenfess.password = newMenfess.generateHash(req.body.password);
+  newMenfess.save();
 
   Consumer = getOAuthMenfess(consumerKey, consumerSecret);
 
@@ -86,7 +87,6 @@ routes.get('/sessions/callback', (req, res) => {
         const update = {
           accessToken: oauthAccessToken,
           accessSecret: oauthAccessTokenSecret,
-          hehe: 'asdasdasdsa',
         };
 
         let data = models.Menfess.findOneAndUpdate(filter, update, function (
@@ -109,25 +109,27 @@ routes.get('/sessions/callback', (req, res) => {
 });
 
 routes.get('/home', (req, res) => {
-  try {
-    Consumer.get(
-      'https://api.twitter.com/1.1/account/verify_credentials.json',
-      req.session.oauthAccessToken,
-      req.session.oauthAccessTokenSecret,
-      (err, data, response) => {
-        if (err) {
-          res.json({ msg: err });
-        } else {
-          // @ts-ignore
-          let parsedData = JSON.parse(data);
-          res.send('You are signed in: ' + parsedData.screen_name);
-        }
-      }
-    );
-  } catch (error) {
-    console.log(error);
-    res.redirect('/');
-  }
+  let sessionData = req.session;
+
+  //create object twitterClient
+  twitterClient = createClient(
+    sessionData.consumerKey,
+    sessionData.consumerSecret,
+    sessionData.oauthAccessToken,
+    sessionData.oauthAccessTokenSecret
+  );
+
+  twitterClient
+    .get('account/verify_credentials', {
+      skip_status: true,
+    })
+    .catch(function (err) {
+      console.log('caught error', err.stack);
+    })
+    .then(function (result) {
+      console.log('data', result.data);
+      res.json(result);
+    });
 });
 
 module.exports = routes;
