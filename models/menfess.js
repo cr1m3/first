@@ -36,7 +36,7 @@ const getOAuthMenfess = (consumerKey, consumerSecret) =>
     consumerKey,
     consumerSecret,
     '1.0A',
-    HEROKU_URL || 'http://localhost:3000/sessions/callback',
+    HEROKU_URL,
     'HMAC-SHA1'
   );
 
