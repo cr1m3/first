@@ -127,6 +127,7 @@ routes.get('/home', (req, res) => {
       console.log('caught error', err.stack);
     })
     .then(function (result) {
+      // @ts-ignore
       console.log('data', result.data);
       res.json(result);
     });

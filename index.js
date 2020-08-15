@@ -5,10 +5,17 @@ const session = require('express-session');
 const port = 3000;
 const routes = require('./routes');
 const bodyParser = require('body-parser');
-// const mongoClient = require('mongodb').MongoClient;
 const MongoStore = require('connect-mongo')(session);
 const path = require('path');
 const { connectDb } = require('./models');
+const dotenv = require('dotenv');
+
+dotenv.config();
+
+const USERNAME = process.env.USERNAME;
+const PASSWORD = process.env.PASSWORD;
+const CLUSTER = process.env.CLUSTER;
+const DB_NAME = process.env.DB_NAME;
 
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.json());
@@ -22,7 +29,7 @@ app.use(
     saveUninitialized: true,
     cookie: { secure: false },
     store: new MongoStore({
-      url: 'mongodb://localhost:27017/',
+      url: `mongodb+srv://${USERNAME}:${PASSWORD}@${CLUSTER}-kdbqm.mongodb.net/${DB_NAME}`,
     }),
   })
 );
@@ -35,17 +42,3 @@ connectDb().then(async () => {
     console.log(`Server running in ${port}`);
   });
 });
-
-// mongoClient
-//   .connect(url, { useUnifiedTopology: true })
-//   .then(client => {
-//     const db = client.db(dbName);
-//     app.set('db', db);
-//     console.log('Connected to Database', db.databaseName);
-
-//     app.use('/', routes);
-//     app.listen(process.env.PORT || 3000, () => {
-//       console.log(`Server running in ${port}`);
-//     });
-//   })
-//   .catch(console.error);
