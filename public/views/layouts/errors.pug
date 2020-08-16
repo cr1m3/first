@@ -1,0 +1,5 @@
+if validationFailure.length > 0
+  div.field
+    div.notification.is-warning.has-text-centered.has-text-weight-bold
+      each err in validationFailure
+        p.mb-1=err.msg

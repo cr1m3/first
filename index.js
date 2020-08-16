@@ -9,6 +9,7 @@ const MongoStore = require('connect-mongo')(session);
 const path = require('path');
 const { connectDb } = require('./models');
 const dotenv = require('dotenv');
+const flash = require('connect-flash');
 
 dotenv.config();
 
@@ -33,8 +34,14 @@ app.use(
     }),
   })
 );
+app.use(flash())
+app.use((req, res, next) => {
+  res.locals.validationFailure = req.flash('validationFailure')
+  next()
+})
+
 app.set('view engine', 'pug');
-app.set('views', path.join(__dirname + '/public/views')); // sets the view directory
+app.set('views', path.join(__dirname + '/public/views'));
 
 connectDb().then(async () => {
   app.use('/', routes);

@@ -5,7 +5,7 @@ block variables
 
 block content
   h1(class="title") Login Menfess
-  form(action="/login/callback", method="post")
+  form(action="/login", method="post")
     div(class="columns")
       div(class="column is-one-quarter")
 
@@ -32,5 +32,6 @@ block content
               span| Login
 
         include ./layouts/back_button.pug
-          
+        include ./layouts/errors.pug
+
   script(src="/js/form-validator.js")  

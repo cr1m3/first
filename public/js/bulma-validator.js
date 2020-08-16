@@ -16,7 +16,7 @@
         fields: ['text', 'email', 'password'],
         settings: {
           text: {
-            regex: '^[A-Za-z0-9-]{4,100}$',
+            regex: '^[A-Za-z0-9_]{4,100}$',
             errMsg: {
               min: 'Minimum chars: 4',
               blank: "Can't be blank",
@@ -137,8 +137,6 @@
       // button.preventDefault();
       ValidateAll($form);
     });
-
-    
 
     return this;
   };

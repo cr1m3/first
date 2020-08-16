@@ -1,8 +1,9 @@
 const routes = require('express').Router();
 const { createClient } = require('./modules/twitter-client');
-const { validateRegister } = require('./modules/validator');
+const { formValidate } = require('./modules/validator');
 const { validationResult } = require('express-validator');
 const { models, getOAuthMenfess } = require('./models');
+const { model } = require('mongoose');
 let Consumer = null;
 let twitterClient = null;
 
@@ -14,62 +15,120 @@ routes.get('/login', (req, res) => {
   res.render('login');
 });
 
-routes.post('/login/callback', (req, res) => {
-  models.Menfess.findOne({ menfessName: req.body.menfessName }, (err, menfess) => {
-    // @ts-ignore
-    if (!menfess.validPassword(req.body.password)) {
-      console.log(err);
-    } else {
-      res.redirect('/home')
-    }
-  })
+routes.post('/login', formValidate.login, (req, res) => {
+  const backURL = req.header('Referer') || '/';
+  const errors = validationResult(req);
+
+  // validate form
+  if (!errors.isEmpty()) {
+    let errorsArray = [];
+    errors.array().map(err => {
+      errorsArray.push({ msg: `${err.msg}` });
+    });
+    req.flash('validationFailure', errorsArray);
+    res.redirect(backURL);
+  } else {
+    models.Menfess.findOne(
+      { menfessName: req.body.menfessName },
+      (err, menfess) => {
+        // validate data
+        if (menfess == null) {
+          let errorsArray = [];
+          errorsArray.push({ msg: 'Menfess not found, please register' });
+          req.flash('validationFailure', errorsArray);
+          res.redirect(backURL);
+        } else {
+          // @ts-ignore
+          if (!menfess.validPassword(req.body.password)) {
+            console.log('Error: ', err);
+            res.redirect(backURL);
+          } else {
+            let sessionData = req.session;
+            sessionData.consumerKey = menfess.consumerKey;
+            sessionData.consumerSecret = menfess.consumerSecret;
+            sessionData.accessToken = menfess.accessToken;
+            sessionData.accessSecret = menfess.accessSecret;
+            res.redirect('/home');
+          }
+        }
+      }
+    );
+  }
 });
 
 routes.get('/register', (req, res) => {
   res.render('register');
 });
 
-routes.post('/register/callback', validateRegister, (req, res) => {
-  let sessionData = req.session;
+routes.post('/register', formValidate.register, (req, res) => {
+  const backURL = req.header('Referer') || '/';
+  const errors = validationResult(req);
+  let errorsArray = [];
 
-  let consumerKey = req.body.consumer_key;
-  let consumerSecret = req.body.consumer_secret;
-  let menfessName = req.body.menfess_name;
-
-  sessionData.menfessName = menfessName;
-  sessionData.consumerKey = consumerKey;
-  sessionData.consumerSecret = consumerSecret;
-
-  let newMenfess = new models.Menfess({
-    menfessName,
-    consumerKey,
-    consumerSecret,
-    isActive: true,
-  });
-
-  // @ts-ignore
-  newMenfess.password = newMenfess.generateHash(req.body.password);
-  newMenfess.save();
-
-  Consumer = getOAuthMenfess(consumerKey, consumerSecret);
-
-  Consumer.getOAuthRequestToken(function (err, oauthToken, oauthTokenSecret) {
-    if (err) {
-      console.log(err);
-    } else {
-      sessionData.oauthRequestToken = oauthToken;
-      sessionData.oauthRequestTokenSecret = oauthTokenSecret;
-
-      res.redirect(
-        'https://twitter.com/oauth/authorize?oauth_token=' + oauthToken
-      );
+  // check existing menfess
+  models.Menfess.findOne(
+    { menfessName: req.body.menfessName },
+    (err, menfess) => {
+      if (menfess != null) {
+        errorsArray.push({ msg: `Menfess udah ada` });
+        req.flash('validationFailure', errorsArray);
+        res.redirect(backURL);
+      }
     }
-  });
+  );
+
+  // validate form
+  if (!errors.isEmpty()) {
+    errors.array().map(err => {
+      errorsArray.push({ msg: `${err.msg}` });
+    });
+
+    req.flash('validationFailure', errorsArray);
+    res.redirect(backURL);
+  } else {
+    let sessionData = req.session;
+
+    let consumerKey = req.body.consumerKey;
+    let consumerSecret = req.body.consumerSecret;
+    let menfessName = req.body.menfessName;
+
+    sessionData.menfessName = menfessName;
+    sessionData.consumerKey = consumerKey;
+    sessionData.consumerSecret = consumerSecret;
+
+    Consumer = getOAuthMenfess(consumerKey, consumerSecret);
+
+    Consumer.getOAuthRequestToken(function (err, oauthToken, oauthTokenSecret) {
+      if (err) {
+        console.log(err);
+        errorsArray.push({ msg: `Key is broken` });
+        req.flash('validationFailure', errorsArray);
+        res.redirect(backURL);
+      } else {
+        let newMenfess = new models.Menfess({
+          menfessName,
+          consumerKey,
+          consumerSecret,
+          isActive: true,
+        });
+
+        // @ts-ignore
+        newMenfess.password = newMenfess.generateHash(req.body.password);
+        newMenfess.save();
+
+        sessionData.oauthRequestToken = oauthToken;
+        sessionData.oauthRequestTokenSecret = oauthTokenSecret;
+
+        res.redirect(
+          'https://twitter.com/oauth/authorize?oauth_token=' + oauthToken
+        );
+      }
+    });
+  }
 });
 
 routes.get('/sessions/callback', (req, res) => {
   let sessionData = req.session;
-  console.log(sessionData);
 
   Consumer.getOAuthAccessToken(
     sessionData.oauthRequestToken,
@@ -80,8 +139,8 @@ routes.get('/sessions/callback', (req, res) => {
         console.log('error callback', err);
         res.json(err);
       } else {
-        sessionData.oauthAccessToken = oauthAccessToken;
-        sessionData.oauthAccessTokenSecret = oauthAccessTokenSecret;
+        sessionData.accessToken = oauthAccessToken;
+        sessionData.accessSecret = oauthAccessTokenSecret;
 
         const filter = { menfessName: sessionData.menfessName };
         const update = {
@@ -115,8 +174,8 @@ routes.get('/home', (req, res) => {
   twitterClient = createClient(
     sessionData.consumerKey,
     sessionData.consumerSecret,
-    sessionData.oauthAccessToken,
-    sessionData.oauthAccessTokenSecret
+    sessionData.accessToken,
+    sessionData.accessSecret
   );
 
   twitterClient
@@ -124,11 +183,9 @@ routes.get('/home', (req, res) => {
       skip_status: true,
     })
     .catch(function (err) {
-      console.log('caught error', err.stack);
+      console.log('Home error:', err.stack);
     })
     .then(function (result) {
-      // @ts-ignore
-      console.log('data', result.data);
       res.json(result);
     });
 });
