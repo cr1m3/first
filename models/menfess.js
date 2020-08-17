@@ -14,7 +14,7 @@ const menfessSchema = new moongose.Schema(
     accessToken: String,
     accessSecret: String,
     isActive: Boolean,
-    password: String
+    password: String,
   },
   { collection: 'menfess_credentials' }
 );
@@ -24,7 +24,11 @@ menfessSchema.methods.generateHash = function (password) {
 };
 
 menfessSchema.methods.validPassword = function (password) {
-  return bcrypt.compareSync(password, this.password);
+  try {
+    return bcrypt.compareSync(password, this.password);
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const Menfess = moongose.model('Menfess', menfessSchema);

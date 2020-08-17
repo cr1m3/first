@@ -18,10 +18,10 @@ routes.get('/login', (req, res) => {
 routes.post('/login', formValidate.login, (req, res) => {
   const backURL = req.header('Referer') || '/';
   const errors = validationResult(req);
+  let errorsArray = [];
 
   // validate form
   if (!errors.isEmpty()) {
-    let errorsArray = [];
     errors.array().map(err => {
       errorsArray.push({ msg: `${err.msg}` });
     });
@@ -32,15 +32,16 @@ routes.post('/login', formValidate.login, (req, res) => {
       { menfessName: req.body.menfessName },
       (err, menfess) => {
         // validate data
+        // console.log(menfess);
         if (menfess == null) {
-          let errorsArray = [];
           errorsArray.push({ msg: 'Menfess not found, please register' });
           req.flash('validationFailure', errorsArray);
           res.redirect(backURL);
         } else {
           // @ts-ignore
           if (!menfess.validPassword(req.body.password)) {
-            console.log('Error: ', err);
+            errorsArray.push({ msg: 'Wrong password' });
+            req.flash('validationFailure', errorsArray);
             res.redirect(backURL);
           } else {
             let sessionData = req.session;
