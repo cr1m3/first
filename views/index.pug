@@ -1,6 +1,12 @@
 extends ./layouts/layout.pug
 
 block content
+  if messageSuccess.length > 0
+    div.field
+      div.notification.is-success.has-text-centered.has-text-weight-bold
+        each msg in messageSuccess
+          p.mb-1=err.msg
+
   h1(class="title") Mockthistweet Menfess Client
   div(class="columns")
     div(class="column is-one-quarter")

@@ -3,6 +3,8 @@ const { formValidate } = require('./modules/validator');
 const checkSession = require('./modules/middleware');
 const { registerController, loginController } = require('./controllers/index');
 const createClient = require('./modules/twitter-client');
+const session = require('express-session');
+const menfess = require('./models/menfess');
 
 routes.get('/', (req, res) => {
   res.render('index');
@@ -21,6 +23,14 @@ routes.post(
 );
 
 routes.get('/sessions/callback', registerController.createMenfess);
+
+routes.get('/logout', (req, res) => {
+  // @ts-ignore
+  req.session.destroy();
+  console.log('Logout Success');
+  // req.flash('messageSuccess', 'Logout Success');
+  res.redirect('/');
+});
 
 routes.get('/home', checkSession, (req, res) => {
   let sessionData = req.session;
@@ -42,7 +52,7 @@ routes.get('/home', checkSession, (req, res) => {
       if (err) {
         console.log(err);
       } else {
-        console.log(data);
+        // @ts-ignore
         let img_url = data.profile_image_url.replace('_normal', '');
         res.render('home', { data, img_url });
       }

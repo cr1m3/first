@@ -1,7 +1,5 @@
 const { models, getOAuthMenfess } = require('../models');
 const { validationResult } = require('express-validator');
-const { createClient } = require('../modules/twitter-client');
-let twitterClient = null;
 
 const getLogin = (req, res) => {
   res.render('login');
@@ -49,4 +47,4 @@ const postLogin = (req, res) => {
   }
 };
 
-module.exports = { getLogin, postLogin, twitterClient };
+module.exports = { getLogin, postLogin };

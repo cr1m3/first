@@ -20,7 +20,7 @@ block content
             .has-text-weight-bold= data.followers_count
             | &nbspFollowers
       .field
-        button.button.is-danger
+        a.button.is-danger(href="/logout")
           span(class="icon")
             <i class="fas fa-sign-out-alt"></i> 
           span| Logout

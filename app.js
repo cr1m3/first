@@ -6,7 +6,6 @@ const port = 3000;
 const routes = require('./routes');
 const bodyParser = require('body-parser');
 const MongoStore = require('connect-mongo')(session);
-const path = require('path');
 const { connectDb } = require('./models');
 const dotenv = require('dotenv');
 const flash = require('connect-flash');
@@ -37,6 +36,8 @@ app.use(
 app.use(flash());
 app.use((req, res, next) => {
   res.locals.validationFailure = req.flash('validationFailure');
+  res.locals.messageSuccess = req.flash('messageSuccess')
+  res.locals.messageInfo = req.flash('messageInfo');
   next();
 });
 
