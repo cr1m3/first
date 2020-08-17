@@ -1,0 +1,26 @@
+extends ./layouts/layout.pug
+
+block variables
+  title= "Homepage " + data.name
+
+block content
+  .columns.is-centered
+    .column.is-2
+      img.image(src= img_url, style="border-radius: 10px")
+    .column
+      .field
+        h3.title.is-3= data.name
+        .tags.are-medium
+          span.tag.is-primary
+            <i class="fas fa-user"></i>&nbsp
+            .has-text-weight-bold= data.friends_count
+            | &nbspFollowing
+          span.tag.is-link
+            <i class="fas fa-users"></i>&nbsp
+            .has-text-weight-bold= data.followers_count
+            | &nbspFollowers
+      .field
+        button.button.is-danger
+          span(class="icon")
+            <i class="fas fa-sign-out-alt"></i> 
+          span| Logout

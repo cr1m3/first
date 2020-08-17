@@ -8,4 +8,4 @@ const createClient = (consumerKey, consumerSecret, accessToken, accessSecret) =>
     access_token_secret: accessSecret,
   });
 
-module.exports = { createClient };
+module.exports = createClient;

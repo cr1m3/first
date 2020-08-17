@@ -34,14 +34,13 @@ app.use(
     }),
   })
 );
-app.use(flash())
+app.use(flash());
 app.use((req, res, next) => {
-  res.locals.validationFailure = req.flash('validationFailure')
-  next()
-})
+  res.locals.validationFailure = req.flash('validationFailure');
+  next();
+});
 
 app.set('view engine', 'pug');
-app.set('views', path.join(__dirname + '/public/views'));
 
 connectDb().then(async () => {
   app.use('/', routes);
