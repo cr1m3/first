@@ -1,8 +1,7 @@
-const checkSession = (req, res, next) => {
-  let sessionData = req.session;
-  let menfessName = sessionData.menfessName;
+const menfess = require('../models/menfess');
 
-  if (menfessName) {
+const isAuthenticated = (req, res, next) => {
+  if (req.session.menfessName) {
     next();
   } else {
     console.log('Login first!');
@@ -10,4 +9,13 @@ const checkSession = (req, res, next) => {
   }
 };
 
-module.exports = checkSession;
+const redirectHome = (req, res, next) => {
+  if (req.session.menfesName) {
+    console.log("You're already logged");
+    res.redirect('/home');
+  } else {
+    next();
+  }
+};
+
+module.exports = { isAuthenticated, redirectHome };

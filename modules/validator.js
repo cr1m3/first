@@ -1,15 +1,16 @@
 const { body } = require('express-validator');
 
 const register = [
-  body('menfessName', "Menfess name can't be empty").notEmpty(),
-  body('password', "Password can't be empty").notEmpty(),
-  body('consumerKey', "Consumer key can't be empty").notEmpty(),
-  body('consumerSecret', "Consumer key can't be empty").notEmpty(),
+  body('menfessName', 'Menfess tidak boleh kosong').notEmpty(),
+  body('triggerWord', 'Trigger word tidak boleh kosong').notEmpty(),
+  body('password', 'Password tidak boleh kosong').notEmpty(),
+  body('consumerKey', 'Consumer key tidak boleh kosong').notEmpty(),
+  body('consumerSecret', 'Consumer key tidak boleh kosong').notEmpty(),
 ];
 
 const login = [
-  body('menfessName', "Menfess name can't be empty").notEmpty(),
-  body('password', "Password can't be empty").notEmpty(),
+  body('menfessName', 'Menfess tidak boleh kosong').notEmpty(),
+  body('password', 'Password tidak boleh kosong').notEmpty(),
 ];
 
 const formValidate = {

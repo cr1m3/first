@@ -13,24 +13,46 @@
           success: 'is-success',
           helptext: 'help',
         },
-        fields: ['text', 'email', 'password'],
+        fields: ['text', 'email', 'password', 'trigger'],
         settings: {
           text: {
             regex: '^[A-Za-z0-9_]{4,100}$',
+            rangeChar: {
+              min: 4,
+              max: 100,
+            },
             errMsg: {
-              min: 'Minimum chars: 4',
-              blank: "Can't be blank",
+              min: 'Minimum karakter: 4',
+              max: 'Maximal karakter: 100',
+              blank: 'Tidak boleh kosong',
             },
           },
           email: {
             regex:
               '^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:.[a-zA-Z0-9-]+)*$',
           },
+          trigger: {
+            regex: '^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]{2,5}$',
+            rangeChar: {
+              min: 2,
+              max: 5,
+            },
+            errMsg: {
+              min: 'Minimum karakter: 2',
+              max: 'Maximal karakter: 5',
+              blank: 'Tidak boleh kosong',
+            },
+          },
           password: {
             regex: "^[A-Za-z ,.'-]{6,35}$",
+            rangeChar: {
+              min: 6,
+              max: 35,
+            },
             errMsg: {
-              min: 'Minimum chars: 6',
-              blank: "Can't be blank",
+              min: 'Minimum karakter: 6',
+              max: 'Maximal karakter: 35',
+              blank: 'Tidak boleh kosong',
             },
           },
         },
@@ -71,13 +93,16 @@
 
     const AddHelpText = (e, fieldType) => {
       const field = e.parent().parent();
+      console.log();
 
       let errMsg = '';
 
       if (e.val().length == 0) {
         errMsg = config.settings[fieldType].errMsg.blank;
-      } else if (e.val().length < 5) {
+      } else if (e.val().length < config.settings[fieldType].rangeChar.min) {
         errMsg = config.settings[fieldType].errMsg.min;
+      } else if (e.val().length > config.settings[fieldType].rangeChar.min) {
+        errMsg = config.settings[fieldType].errMsg.max;
       }
 
       if (field.children().length == 1) {

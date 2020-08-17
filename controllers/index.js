@@ -1,7 +1,8 @@
 const { getRegister, postRegister, createMenfess } = require('./register');
-const { getLogin, postLogin } = require('./login');
+const { getLogin, postLogin, getLogout } = require('./login');
+const getHome = require('./home');
 
 const registerController = { getRegister, postRegister, createMenfess };
-const loginController = { getLogin, postLogin };
+const loginController = { getLogin, postLogin, getLogout };
 
-module.exports = { registerController, loginController };
+module.exports = { registerController, loginController, getHome };

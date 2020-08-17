@@ -1,0 +1,21 @@
+- var isAuthenticated = authenticated
+
+nav(class="navbar is-dark" role="navigation" aria-label="main navigation")
+  .container
+    .navbar-menu
+      if authenticated
+        .navbar-end
+          a(class="navbar-item has-text-danger" href="/logout")
+              span(class="icon")
+                <i class="fas fa-paper-plane"></i>
+              span| &nbspLogout
+      else
+        .navbar-start
+          a(class="navbar-item has-text-success" href="/register")
+            span(class="icon")
+              <i class="fas fa-paper-plane"></i>
+            span| &nbspRegister
+          a(class="navbar-item has-text-link" href="/login")
+            span(class="icon")
+              <i class="fas fa-sign-in-alt"></i>
+            span| &nbspLogin

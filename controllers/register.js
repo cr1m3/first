@@ -16,7 +16,7 @@ const postRegister = (req, res) => {
     { menfessName: req.body.menfessName },
     (err, menfess) => {
       if (menfess != null) {
-        errorsArray.push({ msg: `Menfess udah ada` });
+        errorsArray.push({ msg: `Menfess sudah ada` });
         req.flash('validationFailure', errorsArray);
         res.redirect(backURL);
       }
@@ -37,6 +37,7 @@ const postRegister = (req, res) => {
     let consumerKey = req.body.consumerKey;
     let consumerSecret = req.body.consumerSecret;
     let menfessName = req.body.menfessName;
+    let triggerWord = req.body.triggerWord
 
     sessionData.menfessName = menfessName;
     sessionData.consumerKey = consumerKey;
@@ -51,9 +52,12 @@ const postRegister = (req, res) => {
         req.flash('validationFailure', errorsArray);
         res.redirect(backURL);
       } else {
+
+        // create new menfess object
         let newMenfess = new models.Menfess({
           menfessName,
           isActive: true,
+          triggerWord,
         });
 
         // @ts-ignore
@@ -106,8 +110,8 @@ const createMenfess = (req, res) => {
           }
         );
 
-        console.log(`Success add new menfess ${data}`);
-
+        console.log(`Success add new menfess`);
+        sessionData.authenticated = true;
         res.redirect('/home');
       }
     }

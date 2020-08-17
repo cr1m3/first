@@ -47,4 +47,11 @@ const postLogin = (req, res) => {
   }
 };
 
-module.exports = { getLogin, postLogin };
+const getLogout = (req, res) => {
+  req.session.destroy(err => {
+    console.log('Logout Success');
+    res.redirect('/');
+  });
+};
+
+module.exports = { getLogin, postLogin, getLogout };

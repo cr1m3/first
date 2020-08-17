@@ -1,26 +1,44 @@
 extends ./layouts/layout.pug
 
 block variables
-  title= "Homepage " + data.name
+  title= "Homepage " + menfess.name
 
 block content
-  .columns.is-centered
+  .columns
     .column.is-2
-      img.image(src= img_url, style="border-radius: 10px")
-    .column
+      img.image(src= menfess.img_url, style="border-radius: 10px")
+    .column.is-5
       .field
-        h3.title.is-3= data.name
+        h3.title.is-3= menfess.name
         .tags.are-medium
-          span.tag.is-primary
+          span.tag.is-primary.is-rounded
             <i class="fas fa-user"></i>&nbsp
-            .has-text-weight-bold= data.friends_count
+            .has-text-weight-bold= menfess.following
             | &nbspFollowing
-          span.tag.is-link
+          span.tag.is-success.is-rounded
             <i class="fas fa-users"></i>&nbsp
-            .has-text-weight-bold= data.followers_count
+            .has-text-weight-bold= menfess.followers
             | &nbspFollowers
+          span.tag.is-link.is-rounded
+            <i class="fas fa-inbox"></i>&nbsp
+            .has-text-weight-bold 2384
+            | &nbspMenfess Sent
+          span.tag.is-warning.is-rounded
+            <i class="fas fa-calendar-day"></i>
+            | &nbspSubscription Ends&nbsp
+            .has-text-weight-bold 17 Agustus 2020
+          span.tag.is-danger.is-rounded.is-light
+            <i class="fas fa-quote-left"></i>&nbsp
+            .has-text-weight-bold mtt!
+            | &nbspTrigger Word
+
+  .columns
+    .column.is-4
+      h3.title
+        span(class="icon")
+          <i class="fas fa-cog"></i>
+        span| &nbspSetting
+
       .field
-        a.button.is-danger(href="/logout")
-          span(class="icon")
-            <i class="fas fa-sign-out-alt"></i> 
-          span| Logout
+        input(id="switchIsActive" type="checkbox" name="switchIsActive" class="switch is-rtl is-info" checked)
+        label(for="switchIsActive") Menfess Status 
